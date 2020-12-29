@@ -9,7 +9,7 @@ function Actor(props){
         <Card style={{ width: '18rem' }}>
             <Card.Img variant="top" src={actor.image} />
             <Card.Body>
-                <Card.Title>{actor.fname+" "+actor.lname}</Card.Title>
+                <Card.Title><a href={actor.imdbLnk} title={actor.fname+" "+actor.lname} target="blank">{actor.fname+" "+actor.lname}</a></Card.Title>
                 <Card.Text>
                     {actor.Age()}
                 </Card.Text>
