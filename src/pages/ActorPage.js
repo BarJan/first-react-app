@@ -58,7 +58,7 @@ function ActorPage(){
           return 0;
     }
 
-    //build all (filtered) columns of the page, each contains 1 card    
+    //convert all (filtered) columns of the page, each contains 1 card    
     let actorsCards = actorsData.sort((a,b) => compareActors(a,b)).map( actor => <Col><Actor actor={actor} /></Col>);
     
     return(
