@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Col, Container, FormControl, InputGroup, Row } from "react-bootstrap";
+import { Col, Container, Form, FormControl, InputGroup, Row } from "react-bootstrap";
 import Actor from "../components/Actor";
 import ActorClass from "../models/ActorClass";
 
@@ -17,11 +17,13 @@ function ActorPage(){
                             new ActorClass("Antonio", "Banderas", "1960-08-10", "https://m.media-amazon.com/images/M/MV5BMTUyOTQ3NTYyNF5BMl5BanBnXkFtZTcwMTY2NjIzNQ@@._V1_UX214_CR0,0,214,317_AL_.jpg","https://www.imdb.com/name/nm0000104/?ref_=nv_sr_srsg_0")
                         ];
 
-    //initializing all actors objs
+    //initializing all actors objs into state
     const [actorsData, setActorsData] = useState(actorsAllData);
-    
+    // initialize of filter state
     const [cardsFilter, setCardsFilter] = useState("");
-    
+    // initialize of sort state
+    const [sortState, setSortState] = useState("First name");
+
     function updateStates(newFilter) {
         let filt = newFilter.toLowerCase();
         setCardsFilter(newFilter);
@@ -30,10 +32,34 @@ function ActorPage(){
 
     }
 
+    function compareActors(actorA, actorB) {
+        let compA, compB;
+        if(sortState==="First name"){
+            compA = actorA.fname;
+            compB = actorB.fname;
+        }
+        else if(sortState==="Last name"){
+            compA = actorA.lname;
+            compB = actorB.lname;
+        }
+        else{
+            compA = actorA.Age();
+            compB = actorB.Age();
+        }
 
-    //build all (filtered) columns of the page, each contains 1 card
-    
-    let actorsCards = actorsData.map( actor => <Col><Actor actor={actor} /></Col>);
+        if (compA < compB) {
+            return -1;
+          }
+          if (compA > compB) {
+            return 1;
+          }
+        
+          // names must be equal
+          return 0;
+    }
+
+    //build all (filtered) columns of the page, each contains 1 card    
+    let actorsCards = actorsData.sort((a,b) => compareActors(a,b)).map( actor => <Col><Actor actor={actor} /></Col>);
     
     return(
         <Container>
@@ -47,6 +73,15 @@ function ActorPage(){
                     </InputGroup.Prepend>
                     <FormControl id="basic-url" aria-describedby="basic-addon3" value={cardsFilter} onChange ={(e) => updateStates(e.target.value)}/>
                 </InputGroup>
+
+                <Form.Group controlId="exampleForm.SelectCustom">
+                    <Form.Label>Custom select</Form.Label>
+                        <Form.Control as="select" value={sortState} custom onChange={(e) => setSortState(e.target.value)}>
+                            <option>First name</option>
+                            <option>Last name</option>
+                            <option>Age</option>
+                        </Form.Control>
+                </Form.Group>
             </Row>
             <Row>
                 {actorsCards}
