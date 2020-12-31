@@ -24,13 +24,8 @@ function ActorPage(){
     // initialize of sort state
     const [sortState, setSortState] = useState("First name");
 
-    function updateStates(newFilter) {
-        let filt = newFilter.toLowerCase();
-        setCardsFilter(newFilter);
-        setActorsData(actorsAllData.filter(actor => ( actor.fname.toLowerCase().includes(filt) ||
-                                                      actor.lname.toLowerCase().includes(filt))));        // filtering the cards by the Filter state
-
-    }
+    const filterdData = actorsAllData.filter(actor => ( actor.fname.toLowerCase().includes(cardsFilter.toLocaleLowerCase()) ||
+                                                      actor.lname.toLowerCase().includes(cardsFilter.toLocaleLowerCase())));        // filtering the cards by the Filter state
 
     function compareActors(actorA, actorB) {
         let compA, compB;
@@ -57,9 +52,9 @@ function ActorPage(){
           // names must be equal
           return 0;
     }
-
+    
     //convert all (filtered) columns of the page, each contains 1 card    
-    let actorsCards = actorsData.sort((a,b) => compareActors(a,b)).map( actor => <Col><Actor actor={actor} /></Col>);
+    let actorsCards = filterdData.sort((a,b) => compareActors(a,b)).map( actor => <Col><Actor actor={actor} /></Col>);
     
     return(
         <Container>
@@ -71,7 +66,7 @@ function ActorPage(){
                             Write here:
                         </InputGroup.Text>
                     </InputGroup.Prepend>
-                    <FormControl id="basic-url" aria-describedby="basic-addon3" value={cardsFilter} onChange ={(e) => updateStates(e.target.value)}/>
+                    <FormControl id="basic-url" aria-describedby="basic-addon3" value={cardsFilter} onChange ={(e) => setCardsFilter(e.target.value)}/>
                 </InputGroup>
 
                 <Form.Group controlId="exampleForm.SelectCustom">
