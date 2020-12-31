@@ -5,7 +5,9 @@ import Actor from "../components/Actor";
 import ActorClass from "../models/ActorClass";
 
 
-function ActorPage(){
+function ActorPage(props){
+
+    const {movieByActor} = props;
 
     //initializing all actors objs into state
     const [actorsData, setActorsData] = useState([]);
@@ -14,14 +16,19 @@ function ActorPage(){
     // initialize of sort state
     const [sortState, setSortState] = useState("fname");
 
+        //the app will fetch and show only actors that matches the filtering input text from user
     useEffect(()=>{
         axios.get("actors.json").then(res=>{
-                setActorsData(res.data.map((plainActor)=> new ActorClass(plainActor)));
+                setActorsData(res.data.map((plainActor)=> new ActorClass(plainActor)).filter(actor => ( actor.fname.toLowerCase().includes(cardsFilter.toLocaleLowerCase()) ||
+                actor.lname.toLowerCase().includes(cardsFilter.toLocaleLowerCase()))));
+        
         });
-    }, []);
 
-    const filterdData = actorsData.filter(actor => ( actor.fname.toLowerCase().includes(cardsFilter.toLocaleLowerCase()) ||
-                                                      actor.lname.toLowerCase().includes(cardsFilter.toLocaleLowerCase())));        // filtering the cards by the Filter state
+        
+
+    }, [cardsFilter]);
+
+    const toShow = actorsData.map(actor=>actor.fname+" "+actor.lname);
 
     function compareActors(actorA, actorB) {
         let compA, compB;
@@ -46,7 +53,7 @@ function ActorPage(){
     }
     
     //convert all (filtered) columns of the page, each contains 1 card    
-    let actorsCards = filterdData.sort((a,b) => compareActors(a,b)).map( actor => <Col><Actor actor={actor} /></Col>);
+    const actorsCards = actorsData.sort((a,b) => compareActors(a,b)).map( actor => <Col><Actor actor={actor} /></Col>);
     
     return(
         <Container>
@@ -58,7 +65,11 @@ function ActorPage(){
                             Write here:
                         </InputGroup.Text>
                     </InputGroup.Prepend>
-                    <FormControl id="basic-url" aria-describedby="basic-addon3" value={cardsFilter} onChange ={(e) => setCardsFilter(e.target.value)}/>
+                    <FormControl id="basic-url" aria-describedby="basic-addon3" value={cardsFilter} onChange ={(e) =>{
+                                                                                                                setCardsFilter(e.target.value);
+                                                                                                                movieByActor(toShow);
+                                                                                                                    }
+                                                                                                                }/>
                 </InputGroup>
 
                 <Form.Group controlId="exampleForm.SelectCustom">
