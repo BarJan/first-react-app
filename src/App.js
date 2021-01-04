@@ -8,6 +8,10 @@ function App() {
 
   const [choosedActors, setChoosedActors] = useState([]);
 
+  function update(choosed) {
+    setChoosedActors(choosed);
+  }
+
   return (
     <div className="app-div">
       <div className="flag-text">
@@ -20,7 +24,7 @@ function App() {
           
       </div>
  
-      <ActorPage movieByActor={setChoosedActors} />
+      <ActorPage movieByActor={update} />
       <MoviesPage show={choosedActors}/>
     </div>
   );

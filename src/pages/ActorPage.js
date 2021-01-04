@@ -17,18 +17,20 @@ function ActorPage(props){
     const [sortState, setSortState] = useState("fname");
 
         //the app will fetch and show only actors that matches the filtering input text from user
+
     useEffect(()=>{
         axios.get("actors.json").then(res=>{
-                setActorsData(res.data.map((plainActor)=> new ActorClass(plainActor)).filter(actor => ( actor.fname.toLowerCase().includes(cardsFilter.toLocaleLowerCase()) ||
-                actor.lname.toLowerCase().includes(cardsFilter.toLocaleLowerCase()))));
-        
+                const filt = res.data.map((plainActor)=> new ActorClass(plainActor)).filter(actor => ( actor.fname.toLowerCase().includes(cardsFilter.toLocaleLowerCase()) ||
+                actor.lname.toLowerCase().includes(cardsFilter.toLocaleLowerCase())));
+                setActorsData(filt);
+                const toShow = filt.map(actor=>actor.fname+" "+actor.lname);
+                movieByActor(toShow);
         });
 
         
 
     }, [cardsFilter]);
-
-    const toShow = actorsData.map(actor=>actor.fname+" "+actor.lname);
+    
 
     function compareActors(actorA, actorB) {
         let compA, compB;
@@ -53,7 +55,7 @@ function ActorPage(props){
     }
     
     //convert all (filtered) columns of the page, each contains 1 card    
-    const actorsCards = actorsData.sort((a,b) => compareActors(a,b)).map( actor => <Col><Actor actor={actor} /></Col>);
+    const actorsCards = actorsData.sort((a,b) => compareActors(a,b)).map( (actor,index) => <Col key={index} lg={3} md={4} sm={6}><Actor actor={actor} /></Col>);
     
     return(
         <Container>
@@ -67,7 +69,6 @@ function ActorPage(props){
                     </InputGroup.Prepend>
                     <FormControl id="basic-url" aria-describedby="basic-addon3" value={cardsFilter} onChange ={(e) =>{
                                                                                                                 setCardsFilter(e.target.value);
-                                                                                                                movieByActor(toShow);
                                                                                                                     }
                                                                                                                 }/>
                 </InputGroup>
